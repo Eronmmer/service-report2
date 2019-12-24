@@ -1,16 +1,28 @@
-import React, {useContext} from "react";
+import React, {useContext, useEffect, useRef} from "react";
 import { ReportModal } from "../StyledComponents/Modals";
 import { Button } from "../StyledComponents/Buttons";
 import { MainHeader } from "../StyledComponents/Headers";
 import AppContext from '../Context/AppContext'
 
 const AddReportModal = () => {
+  const modalContent = useRef(null)
   const appContext = useContext( AppContext );
-  const { toggleReportModal, changeReport, reportModal: {hours, placements, videos, returnVisits}, submitReport } = appContext;
+  const { toggleReportModal, changeReport, reportModal: {hours, placements, videos, returnVisits}, submitReport, reportModalOpen } = appContext;
+
+  
+  useEffect(() => {
+    window.addEventListener("click", e => {
+      if (modalContent.current === null) return;
+      if (reportModalOpen && !modalContent.current.contains(e.target)) {
+        toggleReportModal();
+      }
+    });
+  }, [reportModalOpen, modalContent, toggleReportModal]);
+
   return (
     <ReportModal>
       <div className="modalFlex">
-        <div className="modalContent">
+        <div ref={modalContent} className="modalContent">
           <MainHeader modalHeader as="h2">
             Add Some record{" "}
             <span role="img" aria-label="blush emoji">
